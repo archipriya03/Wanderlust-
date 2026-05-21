@@ -1,0 +1,130 @@
+<% layout("/layouts/boilerplate") %>
+<style>
+  #filters { 
+    display: flex; 
+    flex-wrap: wrap; 
+    align-items: center;
+  }
+  .filter { 
+    text-align: center; 
+    opacity: 0.8; 
+    margin-right: 2rem; 
+    margin-top: 1rem; 
+    cursor: pointer; 
+    text-decoration: none; 
+    color: inherit; 
+  }
+  .filter:hover { opacity: 1; }
+  .filter p { font-size: 0.9rem; margin: 0; }
+  .filter.active { opacity: 1; border-bottom: 2px solid black; padding-bottom: 4px; }
+
+  .tax-toggle {
+    margin-left: auto;
+    border: 1px solid grey;
+    border-radius: 1rem;
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+</style>
+
+<div id="filters">
+  <a href="/listings" class="filter <%= !currentCategory ? 'active' : '' %>">
+    <div><i class="fa-solid fa-fire"></i></div><p>Trending</p>
+  </a>
+  <a href="/listings?category=rooms" class="filter <%= currentCategory === 'rooms' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-bed"></i></div><p>Rooms</p>
+  </a>
+  <a href="/listings?category=city" class="filter <%= currentCategory === 'city' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-city"></i></div><p>Iconic Cities</p>
+  </a>
+  <a href="/listings?category=mountain" class="filter <%= currentCategory === 'mountain' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-mountain"></i></div><p>Mountains</p>
+  </a>
+  <a href="/listings?category=historical" class="filter <%= currentCategory === 'historical' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-chess-rook"></i></div><p>Castles</p>
+  </a>
+  <a href="/listings?category=luxury" class="filter <%= currentCategory === 'luxury' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-water-ladder"></i></div><p>Amazing Pools</p>
+  </a>
+  <a href="/listings?category=cabin" class="filter <%= currentCategory === 'cabin' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-campground"></i></div><p>Camping</p>
+  </a>
+  <a href="/listings?category=safari" class="filter <%= currentCategory === 'safari' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-paw"></i></div><p>Farms</p>
+  </a>
+  <a href="/listings?category=ski" class="filter <%= currentCategory === 'ski' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-snowflake"></i></div><p>Arctic</p>
+  </a>
+  <a href="/listings?category=beach" class="filter <%= currentCategory === 'beach' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-umbrella-beach"></i></div><p>Beach</p>
+  </a>
+  <a href="/listings?category=treehouse" class="filter <%= currentCategory === 'treehouse' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-tree"></i></div><p>Treehouse</p>
+  </a>
+  <a href="/listings?category=island" class="filter <%= currentCategory === 'island' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-sailboat"></i></div><p>Island</p>
+  </a>
+
+
+  <div class="tax-toggle">
+<div class="form-check-reverse form-switch">
+  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+  <label class="form-check-label" for="flexSwitchCheckDefault">Show Taxes</label>
+</div>
+  </div>
+</div>
+
+<% if (alllistings.length === 0) { %>
+  <div class="col-12 mt-5 text-center">
+    <h4 class="text-muted">No listings found<% if(typeof search !== 'undefined' && search) { %> for "<%= search %>"<% } %></h4>
+    <a href="/listings" class="btn btn-dark mt-3">Clear Search</a>
+  </div>
+<% } else { %>
+  <div class="row row-cols-lg-3 row-cols-md-2 row-col-sm-1 mt-3">
+    <% for(let listing of alllistings) { %>
+      <a href="/listings/<%=listing._id %>" class="listing-link">
+        <div class="card">
+          <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image" style="height:20rem"/>
+          <div class="card-img-overlay"></div>
+          <div class="card-body">
+            <p class="card-text">
+              <b><%= listing.title %></b><br/>
+              &#8377; <%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %>/night
+            </p>
+          </div>
+        </div>
+      </a>
+    <% } %>
+  </div>
+<% } %>
+
+<script>
+  // store original prices before any toggle
+  document.querySelectorAll(".card-body p").forEach(card => {
+    const priceMatch = card.innerHTML.match(/₹\s?([\d,]+)/);
+    if (priceMatch) {
+      const originalPrice = parseInt(priceMatch[1].replace(/,/g, ""));
+      card.setAttribute("data-price", originalPrice);
+    }
+  });
+
+  const taxToggle = document.querySelector(".tax-toggle input");
+  taxToggle.addEventListener("change", () => {
+    document.querySelectorAll(".card-body p").forEach(card => {
+      const originalPrice = parseInt(card.getAttribute("data-price"));
+      if (!originalPrice) return;
+
+      const displayPrice = taxToggle.checked
+        ? Math.round(originalPrice * 1.18)
+        : originalPrice;
+
+      card.innerHTML = card.innerHTML.replace(
+        /₹\s?[\d,]+/,
+        `₹ ${displayPrice.toLocaleString("en-IN")}`
+      );
+    });
+  });
+</script>

@@ -1,0 +1,119 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-3 mb-5">
+    <div class="col-8 offset-2">
+
+        <form method="POST" action="/signup" class="needs-validation" novalidate>
+
+<h3 class="text-center mb-4">Sign Up On Wanderlust</h3>
+
+            <!-- NAME -->
+            <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input 
+                    name="name"
+                    type="text" 
+                    class="form-control" 
+                    required
+                />
+                <div class="invalid-feedback">
+                    Please enter your name
+                </div>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input 
+                    name="email"
+                    type="email" 
+                    class="form-control" 
+                    required
+                />
+                <div class="invalid-feedback">
+                    Please enter a valid email
+                </div>
+            </div>
+
+            <!-- DOB -->
+            <!-- DOB -->
+<div class="mb-3">
+  <label class="form-label">Date of Birth</label>
+  <input
+    name="dob"
+    type="date"
+    class="form-control"
+    id="dob"
+    required
+  />
+  <div class="invalid-feedback" id="dob-error">
+    Please enter a valid date of birth
+  </div>
+</div>
+
+            <!-- USERNAME -->
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input 
+                    name="username"
+                    type="text" 
+                    class="form-control" 
+                    required
+                />
+                <div class="valid-feedback">
+                    Username looks good!
+                </div>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input 
+                    name="password"
+                    type="password" 
+                    class="form-control" 
+                    required
+                />
+                <div class="invalid-feedback">
+                    Please enter a password
+                </div>
+            </div>
+
+            <button class="btn btn-success mt-3">
+                Sign Up
+            </button>
+
+        </form>
+
+    </div>
+</div>
+<script>
+  const dobInput = document.getElementById("dob");
+
+  // set max date to today so future dates are blocked
+  const today = new Date().toISOString().split("T")[0];
+  dobInput.setAttribute("max", today);
+
+  // set min date to 120 years ago
+  const minDate = new Date();
+  minDate.setFullYear(minDate.getFullYear() - 120);
+  dobInput.setAttribute("min", minDate.toISOString().split("T")[0]);
+
+  dobInput.addEventListener("change", () => {
+    const dob = new Date(dobInput.value);
+    const now = new Date();
+    const age = now.getFullYear() - dob.getFullYear();
+    const errorEl = document.getElementById("dob-error");
+
+    if (age < 18) {
+      dobInput.setCustomValidity("You must be at least 18 years old.");
+      errorEl.textContent = "You must be at least 18 years old to sign up.";
+    } else if (age > 120) {
+      dobInput.setCustomValidity("Please enter a valid date.");
+      errorEl.textContent = "Please enter a valid date of birth.";
+    } else {
+      dobInput.setCustomValidity("");
+      errorEl.textContent = "Please enter a valid date of birth.";
+    }
+  });
+</script>
