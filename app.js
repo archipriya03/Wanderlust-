@@ -101,6 +101,10 @@ app.use((req, res, next) => {
 });
 
 
+app.get("/", (req, res) => {
+    res.redirect(301, "/listings");
+});
+
 app.use("/listings",listings);
 app.use("/listings/:id/reviews", reviewRoutes);
 app.use("/", userRoutes);
